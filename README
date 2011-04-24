@@ -1,7 +1,7 @@
 === Four in A Row ===
 I created this program as way for me to study some simple Heuristic AI. The game is a basic clone of Connect 4 with the aim of the game to create a connection of 4 tokens in a row, either horizontally, vertically, or diagonally. 
 
-It has multiple AI difficulty levels, starting from ones that make obvious mistakes, to the highest level which looks ahead and tries to force the other player into a position where it must lose. Because my aim was to have the AI play using Heuristics somewhat like a human player, it doesn't do any type of brute forced search of the future possible moves. Well except for some particular win/lose plays, like I imagine any human would.
+It has multiple AI difficulty levels, starting from ones that make obvious mistakes, to the highest level in which it tries to force the other player into a position where it must lose. Because my aim was to have the AI play using heuristics somewhat like a human player, it doesn't do any type of brute forced search of the future possible moves. Well except for some particular win/lose plays as I imagine any good human player would.
 
 I only created the most basic GUI which would let me work on the AI, so it doesn't look particularly good.
 
