@@ -47,6 +47,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="nunit.framework, Version=2.5.3.9345, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL" />
+    <Reference Include="Rhino.Mocks, Version=3.6.0.0, Culture=neutral, PublicKeyToken=0b3305902db7183f, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\dev\dot net\rhino mocks 3.6\Rhino.Mocks.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -60,12 +64,20 @@
   <ItemGroup>
     <Compile Include="AI\AIBase.cs" />
     <Compile Include="AI\AIHelper.cs" />
+    <Compile Include="IAI.cs" />
     <Compile Include="Game\Board.cs" />
     <Compile Include="Game\Column.cs" />
     <Compile Include="Game\GameCore.cs" />
     <Compile Include="Game\Tile.cs" />
+    <Compile Include="IGameController.cs" />
+    <Compile Include="IPlayer.cs" />
+    <Compile Include="Tests\Unit\AI\AIBaseTest.cs" />
+    <Compile Include="Tests\Unit\AI\AIBattleGameController.cs" />
     <Compile Include="Tests\Unit\AI\AIHelperTest.cs" />
     <Compile Include="Tests\Unit\GameTest\BoardTest.cs" />
+    <Compile Include="Tests\Unit\GameTest\ColumnTest.cs" />
+    <Compile Include="Tests\Unit\GameTest\TileTest.cs" />
+    <Compile Include="Tests\Unit\Util\TileConnectionTest.cs" />
     <Compile Include="UI\GameController.cs" />
     <Compile Include="UI\MainForm.cs">
       <SubType>Form</SubType>
@@ -89,6 +101,9 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="UI\NewGame.resx">
+      <DependentUpon>NewGame.cs</DependentUpon>
+    </EmbeddedResource>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
@@ -102,10 +117,17 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="UI\NewGame.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\NewGame.Designer.cs">
+      <DependentUpon>NewGame.cs</DependentUpon>
+    </Compile>
     <Compile Include="UI\Player.cs" />
     <Compile Include="UI\UIBoardColumn.cs" />
     <Compile Include="UI\UIBoardTile.cs" />
     <Compile Include="UI\UIComponent.cs" />
+    <Compile Include="Util\TileConnection.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

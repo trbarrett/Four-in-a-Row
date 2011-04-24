@@ -13,16 +13,18 @@ namespace FourRow
         [STAThread]
         static void Main()
         {
-            Testing();
+            //Testing();
 
-            //Application.EnableVisualStyles();
-            //Application.SetCompatibleTextRenderingDefault(false);
-            //Application.Run(new UI.MainForm());
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.Run(new UI.MainForm());
         }
 
         static void Testing() {
+            //var test = new Tests.Unit.GameTest.TileTest();
             var test = new Tests.Unit.AI.AIHelperTest();
-            test.TestDoesTileHaveThreeDirectlyConnectingPlayerTokens_FilledOnOneEnd1();
+            //var test = new Tests.Unit.Util.TileConnectionTest();
+            test.TestFindFourTokenConnectionPossibilties();
         }
     }
 }

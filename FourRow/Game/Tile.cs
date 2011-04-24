@@ -25,5 +25,34 @@ namespace FourRow.Game
             _column = column;
             _rowNo = rowNo;
         }
+
+        public override string ToString() {
+            var owningPlayerStr = "";
+            if (OwningPlayer == null) {
+                owningPlayerStr = "none";
+            } else { 
+                owningPlayerStr = OwningPlayer.ToString();
+            }
+            return string.Format("Tile: [{0},{1}] - {2}", ColumnNo.ToString(), RowNo.ToString(), owningPlayerStr);
+        }
+
+        public string ToStringBasic() {
+            return string.Format("[{0},{1}]", ColumnNo.ToString(), RowNo.ToString());
+        }
+
+        //Note this doesn't take into account the fact that the diagonal may be less than 4 tiles across
+        public int GetPositiveDiagonalStartingRowNo() {
+            return RowNo - ColumnNo;
+        }
+
+        //Note this doesn't take into account the fact that the diagonal may be less than 4 tiles across
+        public int GetNegativeDiagonalStartingRowNo() {
+            return RowNo + ColumnNo;
+        }
+
+        public override bool Equals(object obj) {
+            if (obj == null) { return false; }
+            return this.ToString().Equals(obj.ToString());
+        }
     }
 }

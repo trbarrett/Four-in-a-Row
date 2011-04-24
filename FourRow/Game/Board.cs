@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using FourRow.Util;
 
 namespace FourRow.Game
 {
@@ -24,6 +25,18 @@ namespace FourRow.Game
             }
         }
 
+        public Board Copy() {
+            var copyBoard = new Board();
+
+            Columns.ForEach(column => {
+                column.Tiles.ForEach(tile => {
+                    copyBoard[tile.ColumnNo][tile.RowNo].OwningPlayer = tile.OwningPlayer;
+                });
+            });
+
+            return copyBoard;
+        }
+
         public List<List<Tile>> GetAllRows() {
             var rows = new List<List<Tile>>();
             for (int rowNo = 0; rowNo < BoardHeight; rowNo++) {
@@ -38,6 +51,42 @@ namespace FourRow.Game
                 rowTiles.Add( this[colNo][rowNo]);
             }
             return rowTiles;
+        }
+
+        //Test Me!!
+        public List<Tile> GetAllPlaceableTiles() {
+            var placeableTiles = new List<Tile>();
+            Columns.ForEach(col => {
+                if (!col.IsFull) {
+                    placeableTiles.Add(col.GetFirstEmptyTile());
+                }
+            });
+            return placeableTiles;
+        }
+
+        public List<Tile> GetAllTokenTiles() {
+            var tokenTiles = new List<Tile>();
+            Columns.ForEach(col => {
+                col.Tiles.ForEach( t => {
+                    if (t.OwningPlayer != null) { 
+                        tokenTiles.Add(t); 
+                    }
+                });
+            });
+            return tokenTiles;
+        }
+
+        public List<TileConnection> GetAllTileConnectionsForTile(int colNo, int rowNo) {
+            var tile = this[colNo][rowNo];
+            var tcs = new List<TileConnection>();
+            tcs.Add(new TileConnection(GetRow(rowNo)));
+            tcs.Add(new TileConnection(this.Columns[colNo].Tiles));
+            tcs.Add(new TileConnection(GetPositiveDiagonalTilesFromStartingRow(
+                tile.GetPositiveDiagonalStartingRowNo())));
+            tcs.Add(new TileConnection(GetNegativeDiagonalTilesFromStartingRow(
+                tile.GetNegativeDiagonalStartingRowNo())));
+
+            return tcs;
         }
 
         public List<List<Tile>> GetAllPositiveDiagonals() {

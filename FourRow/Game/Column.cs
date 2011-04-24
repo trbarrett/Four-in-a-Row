@@ -20,8 +20,16 @@ namespace FourRow.Game
             get { return GetFirstEmptyTile() == null; }
         }
 
+        public bool IsEmpty {
+            get {
+                var firstEmptyTile = GetFirstEmptyTile();
+                if (firstEmptyTile == null) {return false;}
+                return firstEmptyTile.RowNo == 0;
+            }
+        }
+
         public Tile GetFirstEmptyTile() {
-            return Tiles.Find(delegate(Tile t) {
+            return Tiles.Find(t => {
                 return t.OwningPlayer == null;
             });
         }
@@ -32,6 +40,14 @@ namespace FourRow.Game
             for (int row = 0; row < Board.BoardHeight; row++) {
                 Tiles.Add(new Tile(this, row));
             }
+        }
+
+        public override string ToString() {
+            string fillState = "";
+            if (this.IsFull) { fillState = "full"; }
+            else if (this.IsEmpty) { fillState = "empty"; } 
+            else { fillState = GetFirstEmptyTile().RowNo.ToString(); }
+            return string.Format("Column: [{0}], filled to: {1}", _columnNo.ToString(), fillState);
         }
     }
 }

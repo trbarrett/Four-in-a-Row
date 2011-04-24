@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using FourRow.UI;
 
 namespace FourRow.Game
 {
@@ -17,6 +18,7 @@ namespace FourRow.Game
         private Tile _winningTile;
         private List<List<Tile>> _winningSets;
         private Object _winningPlayer;
+        private bool _isStalemate = false;
 
         public event EventHandler GameStateChanged;
 
@@ -30,6 +32,13 @@ namespace FourRow.Game
             get { return _winningPlayer; }
         }
 
+        public bool IsStatemate { get { return _isStalemate; } } 
+
+        public GameCore(Object player1, Object player2, Object startingPlayer)
+                : this(player1, player2) {
+            _currentPlayer = startingPlayer;
+        }
+
         public GameCore(Object player1, Object player2) {
             _player1 = player1;
             _player2 = player2;
@@ -38,7 +47,7 @@ namespace FourRow.Game
         }
 
         public bool IsGameFinished() {
-            return _winningPlayer != null;
+            return _isStalemate || _winningPlayer != null;
         }
 
         public List<Tile> GetWinningTiles() {
@@ -62,16 +71,16 @@ namespace FourRow.Game
             return unique.ToList();
         }
 
+        public GameCore Copy(Object setCurrentPlayer) {
+            var copyGame = this.Copy();
+            copyGame._currentPlayer = setCurrentPlayer;
+            return copyGame;
+        }
+
         public GameCore Copy() {
             var copyGame = new GameCore(_player1, _player2);
             copyGame._currentPlayer = this._currentPlayer;
-
-            Board.Columns.ForEach(column => {
-                column.Tiles.ForEach(tile => {
-                    copyGame.Board[tile.ColumnNo][tile.RowNo].OwningPlayer = tile.OwningPlayer;
-                });
-            });
-
+            copyGame._board = Board.Copy();
             return copyGame;
         }
 
@@ -80,7 +89,7 @@ namespace FourRow.Game
         }
 
 
-        public void DropTokenOnColumn(Column column) {
+        private void DropTokenOnColumn(Column column) {
             if (column.IsFull) {
                 throw new ApplicationException(string.Format("Cannot drop token on column {0} because it is full!", column.ColumnNo));
             }
@@ -97,6 +106,9 @@ namespace FourRow.Game
                 _winningPlayer = _currentPlayer;
                 _currentPlayer = null;
 
+            } else if (this.Board.GetAllPlaceableTiles().Count == 0) {
+                _isStalemate = true;
+
             } else {
                 //after a token has been dropped we update the current player
                 _currentPlayer = GetNonCurrentPlayer();
@@ -108,6 +120,10 @@ namespace FourRow.Game
 
         public Object GetNonCurrentPlayer() {
             return (_currentPlayer == _player1) ? _player2 : _player1;
+        }
+
+        public Object GetOtherPlayer(Object player) {
+            return (player == _player1) ? _player2 : _player1;
         }
 
         private List<List<Tile>> CheckForWin(Tile lastPlayedTile) {

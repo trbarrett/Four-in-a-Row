@@ -6,7 +6,7 @@ using System.Drawing;
 
 namespace FourRow.UI
 {
-    public class GameController
+    public class GameController : IGameController
     {
         private Player _player1;
         private Player _player2;
@@ -29,25 +29,34 @@ namespace FourRow.UI
             get { return _game; }
         }
 
-        public void InitializeGame() {
-            _player1 = new Player("Player 1", Player.Player1TokenColour, Player.Player1HighlightColour);
-            _player2 = new Player("Player 2", Player.Player2TokenColour, Player.Player2HighlightColour);
-            _game = new Game.GameCore(_player1, _player2);
-
-            _game.GameStateChanged += new EventHandler(
-                (sender, e) => {
-                    _dropBoard.UpdateState();
-                    if (_game.IsGameFinished()) {
-                        _mainForm.SetFinishedState(_game);
-                        _dropBoard.SetFinishedState();
-                    }
-                });
+        public IPlayer CurrentPlayer {
+            get { return (Player)_game.CurrentPlayer; }
         }
 
-        public GameController(MainForm mainForm, DropBoard dropBoard) {
+        public GameController(MainForm mainForm, DropBoard dropBoard, Player player1, Player player2) {
             _mainForm = mainForm;
             _dropBoard = dropBoard;
-            InitializeGame();
+            _player1 = player1;
+            _player2 = player2;
+
+            _game = new Game.GameCore(_player1, _player2);
+            _game.GameStateChanged += new EventHandler(OnGameStateChanged);
+        }
+
+        public void OnGameStateChanged(Object sender, EventArgs e) {
+            _dropBoard.UpdateState();
+            if (_game.IsGameFinished()) {
+                _mainForm.SetFinishedState(_game);
+                _dropBoard.SetFinishedState();
+
+            } else {
+                IPlayer player = (IPlayer) _game.CurrentPlayer;
+                //Let the dropboard know what player's turn it is so that it
+                //can display that information, and if the player is an AI,
+                //give it control.
+                _dropBoard.SetCurrentPlayer(player);
+
+            }
         }
 
         public Player GetWinningPlayer() {
@@ -67,7 +76,7 @@ namespace FourRow.UI
 
         public void DropTokenOnColumn(UIBoardColumn uiColumn) {
             if (!uiColumn.GameColumn.IsFull) {
-                _game.DropTokenOnColumn(uiColumn.GameColumn);
+                _game.DropTokenOnColumn(uiColumn.GameColumn.ColumnNo);
             }
         }
 

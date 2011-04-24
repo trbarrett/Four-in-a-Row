@@ -15,6 +15,7 @@ namespace FourRow.UI
         private readonly int StartLeft = 2;
 
         private GameController _currentGame;
+        private IPlayer _currentPlayer;
         private bool _gameFinished = false;
 
         private Timer flashTimer;
@@ -32,10 +33,16 @@ namespace FourRow.UI
             _currentGame = gameController;
             SetupBoard();
             this.Invalidate();
+            SetCurrentPlayer(gameController.CurrentPlayer);
         }
 
         public void UpdateState() {
             this.Invalidate();
+        }
+
+        public void SetCurrentPlayer(IPlayer player) {
+            _currentPlayer = player;
+            player.PlayTurn(_currentGame);
         }
 
         public void SetFinishedState() {
@@ -57,14 +64,16 @@ namespace FourRow.UI
         }
 
         public void UpdateFlashState(bool flashOn) {
-            List<Game.Tile> tiles = _currentGame.Game.GetWinningTiles();
-            IEnumerable<UIBoardTile> winningUITiles =
-                from tile in tiles
-                select _uiBoardColumns[tile.ColumnNo][tile.RowNo];
+            if (!_currentGame.Game.IsStatemate) {
+                List<Game.Tile> tiles = _currentGame.Game.GetWinningTiles();
+                IEnumerable<UIBoardTile> winningUITiles =
+                    from tile in tiles
+                    select _uiBoardColumns[tile.ColumnNo][tile.RowNo];
 
-            winningUITiles.ToList().ForEach(uiTile => {
-                uiTile.UpdateHighlightState(flashOn);
-            });
+                winningUITiles.ToList().ForEach(uiTile => {
+                    uiTile.UpdateHighlightState(flashOn);
+                });
+            }
         }
 
         public void SetupBoard() {
@@ -96,6 +105,12 @@ namespace FourRow.UI
         protected override void OnMouseClick(MouseEventArgs e) {
             //once the game is finished stop responding to mouse clicks
             if (_gameFinished) {
+                return;
+            }
+
+            //make sure we have an iteractive player. If they are not
+            //we are not going to respond user events.
+            if (!_currentPlayer.IsInteractive()) {
                 return;
             }
 
